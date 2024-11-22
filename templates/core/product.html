@@ -1,0 +1,85 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container">
+    <br>
+    <div class="card mb-3">
+        <div class="row g-0">
+        <div class="col-md-4">
+            <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="...">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <br> 
+            ID: {{ product.id}}
+            <p class="card-text">{{ product.description }}</p>
+
+            {% if product.is_sales %}
+            <div class="d-flex justify-content-left small text-warning mb-2">
+                <div class="bi-star-fill"></div>
+                &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                <div class="bi-star-fill"></div>
+            </div>
+
+                <strike>
+                ${{ product.price }}
+                </strike>
+                &nbsp;
+                ${{ product.sales_price }}
+
+            {% else %}
+                ${{ product.price }}
+            {% endif %}
+            <div class="row">
+                <div class="col-md-2">Quantity:</div>
+                <div class="col-md-2">
+                    <select id="qty-cart" class="form-select form-select-sm">
+                        <option value="1" selected>1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                    </select>
+                </div>
+            </div>
+            
+
+            <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+            <button type="button" class="btn btn-primary" value="{{ product.id }}" id="add-cart">Add to Cart</button>
+            <a href="{% url 'index' %}" class="btn btn-secondary">Home</a>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    //check if button is pressed
+    $(document).on('click', '#add-cart', function(e){
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'cart_add' %}",
+            data: {
+                product_id: $('#add-cart').val(),
+                product_qty: $('#qty-cart option:selected').val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+
+            success: function(json){
+                console.log(json);
+                document.getElementById('cart_quantity').textContent = json.cart_quantity;
+                location.reload();
+            },
+
+            error: function(xhr, errmsg, err){
+
+            },
+        });
+    });
+</script>
+{% endblock %}
