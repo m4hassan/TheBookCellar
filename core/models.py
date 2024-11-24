@@ -16,6 +16,8 @@ class Profile(models.Model):
     zipcode = models.CharField(max_length=100, blank=True)
     country = models.CharField(max_length=100, blank=True)
 
+    old_cart = models.CharField(max_length=100, blank=True, null=True)
+
     def __str__(self):
         return self.user.username
 
@@ -58,7 +60,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='uploads/product/') 
     is_sales = models.BooleanField(default=False)
-    sales_price = models.DecimalField(default=0, decimal_places=2, max_digits=6)
+    sales_price = models.DecimalField(default=0, decimal_places=2, max_digits=6) # type: ignore
 
     def __str__(self) -> str:
         return self.name

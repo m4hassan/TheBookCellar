@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 
 from .cart import Cart
-from core.models import Product
+from core.models import Product, Profile
 
 
 def cart_summary(request):
