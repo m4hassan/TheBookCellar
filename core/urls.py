@@ -14,6 +14,7 @@ urlpatterns = [
     path('update_password/', views.update_password, name='update_password'), # type: ignore
     
     path('product/<int:pk>', views.product, name='product'),
+    path('search/', views.search, name='search'),
     path('category/<str:cat>', views.category, name='category'),
     path('category_directory/', views.category_directory, name='category_directory')
 ]

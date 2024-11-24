@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-
+from django.db.models import Q
 from django.contrib.auth.models import User
 from .models import Product, Category, Profile
 from .forms import SignUpForm, UserUpdateForm, PasswordChangeForm, InfoUpdateForm
@@ -117,6 +117,24 @@ def update_password(request):
 def product(request, pk):
     product = Product.objects.get(id=pk)
     return render(request, 'core/product.html', {'product':product})
+
+
+def search(request):
+    # Determine if the form is filled.
+    if request.method == 'POST':
+        searched = request.POST['searched']
+        # Query the Products DB Model
+        searched = Product.objects.filter(Q(name__icontains=searched) | Q(description__icontains=searched))
+        # print(searched[1].description)
+        
+        # check if product exists or not
+        if not searched:
+            messages.success(request, 'that product does not exist...')
+            return render(request, 'core/search.html', {})
+        else:
+            return render(request, 'core/search.html', {'searched':searched})
+    else:
+        return render(request, 'core/search.html', {})
 
 
 def category(request, cat):
