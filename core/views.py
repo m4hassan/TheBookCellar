@@ -2,9 +2,14 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.db.models import Q
+
 from django.contrib.auth.models import User
 from .models import Product, Category, Profile
 from .forms import SignUpForm, UserUpdateForm, PasswordChangeForm, InfoUpdateForm
+
+from payment.models import ShippingAddress
+from payment.forms import ShippingInfoForm
+
 import json
 from cart.cart import Cart
 
@@ -95,14 +100,27 @@ def update_user(request):
 
 def update_info(request):
     if request.user.is_authenticated:
+        # Get current user
         user_profile = Profile.objects.get(user=request.user)
+        # Get original User info form
         infoform = InfoUpdateForm(request.POST or None, instance=user_profile)
-        if infoform.is_valid():
+        # Get current user's shipping info
+        try:
+            shipping_user = ShippingAddress.objects.get(shipping_user_id=request.user.id)
+            shipping_form = ShippingInfoForm(request.POST or None, instance=shipping_user)
+        except ShippingAddress.DoesNotExist:
+            # Get user shipping form
+            shipping_form = ShippingInfoForm(request.POST or None)
+
+        if infoform.is_valid() or shipping_form.is_valid():
             infoform.save()
+            shipping_form = shipping_form.save(commit=False)
+            shipping_form.shipping_user = request.user
+            shipping_form.save()
             messages.success(request, ("Profile Info updated..."))
             return redirect('update_info')
         
-        return render(request, 'core/update_info.html', {'infoform':infoform})
+        return render(request, 'core/update_info.html', {'infoform':infoform, 'shipping_form':shipping_form})
     else:
         messages.success(request, ("Woah! Stop right there! Login First!"))
         return redirect('login')
