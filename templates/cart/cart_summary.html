@@ -70,7 +70,10 @@
             </div>
         </div>
         {% endfor %}
-        <h3>Total: ${{ totals }}</h3>
+        <div class="mb-4" align="right">
+            <h3>Total: ${{ totals }}</h3>
+            <a href="{% url 'checkout' %}" class="btn btn-success">Checkout</a>
+        </div>
     {% else %}
         <div class="d-flex mb-4 justify-content-center">
             <h6>There is nothing in the cart! :(</h6>

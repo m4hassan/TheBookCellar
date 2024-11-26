@@ -1,0 +1,60 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Check Out</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Review your order!</p>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 mb-3">
+            <br>
+            <div class="card mb-3">
+                <div class="card-header">
+                    Order Summary
+                </div>
+                <div class="card-body">
+                    {% for product in cart_products %}
+                        <h5 class="card-title" style="display: inline;">{{ product.name }}</h5>
+                        {% if product.is_sales %}
+                            <h6 style="display: inline;">${{ product.sales_price}}</h6>
+                        {% else %}
+                            <h6 style="display: inline;">${{ product.price}}</h6>
+                        {% endif %}
+                        <p class="card-text"><i><small>x
+                            {% for key, value in quantities.items %}
+                                {% if key == product.id|slugify %}
+                                    {{ value }}
+                                {% endif %}
+                            {% endfor %}
+                        </small></i></p>
+                    {% endfor %}
+                    <h5>Total: ${{ totals }}</h5>
+                    <a href="{% url 'cart_summary' %}" class="btn btn-sm btn-outline-primary">Update Cart</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                  Shipping Info
+                </div>
+                <div class="card-body">
+                    <form action="">
+                        {{ shipping_form.as_p }}
+                    </form>
+                  <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                </div>
+              </div>
+            <br>
+            <a href="#" class="btn btn-primary"> Continue to Billing</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

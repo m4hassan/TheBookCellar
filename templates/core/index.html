@@ -30,9 +30,11 @@
                                     <h5 class="fw-bolder">{{ product.name }}</h5>
                                     <!-- Product price-->
                                     {% if product.is_sales %}
-                                    <strike>${{ product.sales_price }}</strike> ${{ product.price }}
+                                        <strike>${{ product.price }}</strike>
+                                        <br>
+                                        ${{ product.sales_price }}  
                                     {% else %}
-                                    ${{ product.price }}
+                                        ${{ product.price }}
                                     {% endif %}
                                 </div>
                             </div>
