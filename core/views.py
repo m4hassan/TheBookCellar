@@ -43,7 +43,6 @@ def login_user(request):
                 for key, value in converted_cart.items():
                     cart.db_add(product=key, product_qty=value)
 
-
             messages.success(request, ("You have been logged in!"))
             return redirect('index')
         else:
