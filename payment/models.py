@@ -42,7 +42,10 @@ class Order(models.Model):
     date_ordered = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return f'User {self.user.id} Order {str(self.id)}'
+        if self.user:
+            return f'User {self.user.id} Order {str(self.id)}'
+        else:
+            return f'User {self.user} Order {str(self.id)}'
     
 
 class OrderItem(models.Model):
