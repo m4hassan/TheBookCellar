@@ -5,8 +5,8 @@
 <header class="bg-dark py-5">
     <div class="container px-4 px-lg-5 my-5">
         <div class="text-center text-white">
-            <h1 class="display-4 fw-bolder">Billing Info</h1>
-            <p class="lead fw-normal text-white-50 mb-0">Review your billing info!</p>
+            <h1 class="display-4 fw-bolder">Processing Order</h1>
+            <p class="lead fw-normal text-white-50 mb-0">......</p>
         </div>
     </div>
 </header>
@@ -69,14 +69,14 @@
                   Billing Info
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{% url 'process_order' %}">
+                    <form type="POST" action="{% url 'process_order' %}">
                         {% csrf_token %}
-                        {{ billing_form.as_p }}    
+                        {{ billing_form.as_p }}
+                    </form>
                 </div>
             </div>
             <br>
             <button type="submit" class="btn btn-success">Pay Now</button>
-            </form>
         </div>
     </div>
 </div>

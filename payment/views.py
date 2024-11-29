@@ -24,12 +24,17 @@ def checkout(request):
 
 
 def billing_info(request):
-    if request.POST: 
-        print(request.POST)   
+    if request.POST:
+        # get the cart 
         cart = Cart(request)
         cart_products = cart.get_prods
         quantities = cart.get_quants
         totals = cart.cart_total
+
+        # save shipping data to session
+        my_shipping = request.POST
+        request.session['my_shipping'] = my_shipping
+
         # if user is logged in
         if request.user.is_authenticated:
             # Get the billing form
@@ -54,6 +59,25 @@ def billing_info(request):
     else:
         messages.success(request, ("Access Denied!"))
         return redirect('index')
+
+
+def process_order(request):
+    if request.POST:
+        # get shipping info from session
+        shipping_info = request.session.get('my_shipping')
+        print(shipping_info)
+        # get payment form
+        payment_form = PaymentForm(request.POST or None)
+
+
+
+        messages.success(request, ("Order created!"))
+        return redirect('index')
+    else:
+        messages.error(request, ("Access Denied!"))
+        return redirect('index')
+
+
 
 def payment_success(request):
     return render(request, 'payment/payment_success.html', {})
