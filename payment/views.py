@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from core.models import Profile
+from django.contrib.auth.models import User
+
 from cart.cart import Cart
-from payment.models import ShippingAddress
+from payment.models import ShippingAddress, Order, OrderItem
 from payment.forms import ShippingInfoForm, PaymentForm
-# Create your views here.
+
 
 def checkout(request):
     cart = Cart(request)
@@ -63,16 +64,40 @@ def billing_info(request):
 
 def process_order(request):
     if request.POST:
+        # get payment form
+        payment_form = PaymentForm(request.POST or None)
         # get shipping info from session
         shipping_info = request.session.get('my_shipping')
         print(shipping_info)
-        # get payment form
-        payment_form = PaymentForm(request.POST or None)
+        
+        # Gather order info
+        full_name = shipping_info['shipping_full_name']
+        email = shipping_info.get('shipping_email')
+        phone = shipping_info.get('shipping_phone')
+        # create shipping address from session info
+        shipping_address = f"{shipping_info['shipping_address1']}\n{shipping_info['shipping_address2']}\n{shipping_info['shipping_city']}\n{shipping_info['shipping_state']}\n{shipping_info['shipping_zipcode']}\n{shipping_info['shipping_country']}"
+        amount_paid = Cart(request).cart_total()
 
+        if request.user.is_authenticated:
+            # logged in
+            user = request.user
+        else:
+            # not logged in
+            user = None
 
+        # create an order
+        create_order = Order(user=user, 
+                             full_name=full_name, 
+                             email=email, 
+                             phone=phone, 
+                             shipping_address=shipping_address, 
+                             amount_paid=amount_paid,
+                             )
+        create_order.save()
 
-        messages.success(request, ("Order created!"))
+        messages.success(request, ("Order placed!"))
         return redirect('index')
+    
     else:
         messages.error(request, ("Access Denied!"))
         return redirect('index')
