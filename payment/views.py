@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 from cart.cart import Cart
 from payment.models import ShippingAddress, Order, OrderItem
+from core.models import Product
 from payment.forms import ShippingInfoForm, PaymentForm
 
 
@@ -64,6 +65,11 @@ def billing_info(request):
 
 def process_order(request):
     if request.POST:
+        # get cart data
+        cart = Cart(request)
+        cart_products = cart.get_prods
+        quantities = cart.get_quants()
+        totals = cart.cart_total()
         # get payment form
         payment_form = PaymentForm(request.POST or None)
         # get shipping info from session
@@ -76,7 +82,7 @@ def process_order(request):
         phone = shipping_info.get('shipping_phone')
         # create shipping address from session info
         shipping_address = f"{shipping_info['shipping_address1']}\n{shipping_info['shipping_address2']}\n{shipping_info['shipping_city']}\n{shipping_info['shipping_state']}\n{shipping_info['shipping_zipcode']}\n{shipping_info['shipping_country']}"
-        amount_paid = Cart(request).cart_total()
+        amount_paid = totals
 
         if request.user.is_authenticated:
             # logged in
@@ -85,7 +91,7 @@ def process_order(request):
             # not logged in
             user = None
 
-        # create an order
+        # create order
         create_order = Order(user=user, 
                              full_name=full_name, 
                              email=email, 
@@ -94,6 +100,21 @@ def process_order(request):
                              amount_paid=amount_paid,
                              )
         create_order.save()
+
+        # add order items
+        # get order id
+        order_id = create_order.pk
+        # get product info
+        for product in cart_products():
+            product_id = product.id
+            quantity = quantities[str(product_id)]
+            if product.is_sales:
+                price = product.sales_price
+            else:
+                price = product.price
+            # create and save order item 
+            create_order_item = OrderItem(order_id=order_id, product_id=product_id, user=user, quantity=quantity, price=price)
+            create_order_item.save()
 
         messages.success(request, ("Order placed!"))
         return redirect('index')
