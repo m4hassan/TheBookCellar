@@ -1,0 +1,39 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Pending orders</h1>
+        </div>
+    </div>
+</header>
+
+<div class="container mt-3">
+    <div class="row">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Order Id</th>
+                <th scope="col">Full Name</th>
+                <th scope="col">Amount Paid</th>
+                <th scope="col">Shipping Address</th>
+                <th scope="col">Date Ordered</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              {% for order in orders %}  
+              <tr>
+                <th scope="row">{{ order.id }}</th>
+                <td>{{ order.full_name }}</td>
+                <td>$ {{ order.amount_paid }}</td>
+                <td>{{ order.shipping_address }}</td>
+                <td>{{ order.date_ordered.date }}</td>
+              </tr>
+              {% endfor %} 
+            </tbody>
+        </table>            
+    </div>
+</div>
+{% endblock %}

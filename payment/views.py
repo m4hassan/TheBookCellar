@@ -135,5 +135,24 @@ def process_order(request):
         return redirect('index')
 
 
+
 def payment_success(request):
     return render(request, 'payment/payment_success.html', {})
+
+
+
+def shipped_dashboard(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        shipped_orders = Order.objects.filter(shipped=True)
+        return render(request, 'payment/shipped_dashboard.html', {'orders':shipped_orders})
+    else:
+        messages.error(request, ("Access Denied!"))
+        return redirect('index')
+
+def not_shipped_dashboard(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        pending_orders = Order.objects.filter(shipped=False)
+        return render(request, 'payment/not_shipped_dashboard.html', {'orders':pending_orders})
+    else:
+        messages.error(request, ("Access Denied!"))
+        return redirect('index')
