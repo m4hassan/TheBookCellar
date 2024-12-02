@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from cart.cart import Cart
 from payment.models import ShippingAddress, Order, OrderItem
-from core.models import Product
+from core.models import Product, Profile
 from payment.forms import ShippingInfoForm, PaymentForm
 
 
@@ -116,13 +116,23 @@ def process_order(request):
             create_order_item = OrderItem(order_id=order_id, product_id=product_id, user=user, quantity=quantity, price=price)
             create_order_item.save()
 
+        # clear cart items
+        for key in list(request.session.keys()):
+            if key == 'session_key':
+                # delete the key
+                del request.session[key]
+        # clear cart from db if user is logged in
+        if request.user.is_authenticated:
+            current_user = Profile.objects.get(user_id=request.user.id)
+            current_user.old_cart = ""
+            current_user.save()
+
         messages.success(request, ("Order placed!"))
         return redirect('index')
     
     else:
         messages.error(request, ("Access Denied!"))
         return redirect('index')
-
 
 
 def payment_success(request):
