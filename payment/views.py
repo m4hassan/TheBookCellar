@@ -156,3 +156,20 @@ def not_shipped_dashboard(request):
     else:
         messages.error(request, ("Access Denied!"))
         return redirect('index')
+    
+
+
+def orders(request, pk):
+    if request.user.is_authenticated and request.user.is_superuser:
+        # get the order
+        order = Order.objects.get(id=pk)
+        # get the order items
+        order_items = OrderItem.objects.filter(order__id=pk)
+        context = {
+            'order':order,
+            'order_items':order_items
+        }
+        return render(request, 'payment/orders.html', context)
+    else:
+        messages.error(request, ("Access Denied!"))
+        return redirect('index')

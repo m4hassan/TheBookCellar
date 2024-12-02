@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Order # {{ order.id }}</h1>
+        </div>
+    </div>
+</header>
+
+<div class="container mt-3 mb-3">    
+        <div class="card">
+            <div class="card-header">
+              Order no. {{ order.id }} - ${{ order.amount_paid }}
+            </div>
+            <div class="card-body">
+                Full Name : {{ order.full_name }}
+                <br>
+                Email : {{ order.email }}
+                <br>
+                {% if order.shipped %}
+                    Date Shipped : {{ order.date_shipped.date }}
+                {% else %}
+                    Date Ordered : {{ order.date_ordered.date }}
+                {% endif %}
+                <br>
+                Shipping Address : {{ order.shipping_address }}
+                <br>
+                <hr>
+                {% for item in order_items %}
+                    {{ item.product }} - x{{ item.quantity }} - ${{ item.price }}
+                    <br>
+                {% endfor %}
+
+            </div>    
+        </div>
+        <br>    
+        <button class="btn btn-primary" onclick="javascript:history.back()">Go back</button>
+</div>
+{% endblock %}

@@ -25,7 +25,7 @@
             <tbody class="table-group-divider">
               {% for order in orders %}  
               <tr>
-                <th scope="row">{{ order.id }}</th>
+                <th scope="row"><a href="{% url 'orders' order.id %}">{{ order.id }}</a></th>
                 <td>{{ order.full_name }}</td>
                 <td>$ {{ order.amount_paid }}</td>
                 <td>{{ order.shipping_address }}</td>
